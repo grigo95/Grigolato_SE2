@@ -11,7 +11,30 @@ function check(url, invocationParameters,  expectedResultData, expectedResultSta
         resultDataAsExpected: null
     }
 
+var par = '?';
 
+    for (var i = 0; i < Object.keys(invocationParameters).length; i++) {
+        if (i > 0) {
+            par = par.concat('&');
+        }
+
+        var key = Object.keys(invocationParameters)[i];
+        var value = invocationParameters[key];
+        par = par.concat(key + '=' + value);
+    }
+
+    url = url.concat(par);
+
+    return fetch(url).then((res) => {
+        return res.json().then((data) => {
+            checkResult.resultData = data;
+            checkResult.resultStatus = res.status;
+            checkResult.statusTestPassed = compareResults(expectedResultStatus, checkResult.resultStatus);
+            checkResult.resultDataAsExpected = compareResults(expectedResultData, checkResult.resultData);
+            
+            return checkResult;
+        });
+    });
 
 }
 
